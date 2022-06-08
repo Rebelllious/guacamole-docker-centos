@@ -83,28 +83,25 @@ fi
 
 if [[ -z "${installLDAP}" ]]; then
     # Prompt the user if they would like to configure LDAP authentication in addition to MySQL, default of no
-    echo -e -n "${CYAN}LDAP: Would you like to configure LDAP authentication in addition to MySQL? (y/N): ${NC}"
+    echo -e -n "${CYAN}MFA: Would you like to configure LDAP authentication in addition to MySQL? (y/N): ${NC}"
     read LDAP_PROMPT
     if [[ ${LDAP_PROMPT} =~ ^[Yy]$ ]]; then
         installLDAP=true
+        read -s "Enter LDAP host IP or FQDN: " LDAP_URL_VAL
+        echo
+        read -s "Enter LDAP port: " LDAP_PORT_VAL
+        echo
+        read -s "Select LDAP encryption method ( none | ssl | starttls ): " LDAP_ENC_VAL
+        echo
+        read -s "Enter LDAP user base DN: " LDAP_USER_BASE_DN_VAL
+        echo
+        read -s "Enter LDAP search bind DN: " LDAP_SEARCH_BIND_DN_VAL
+        echo
+        read -s "Enter LDAP search bind password: " LDAP_SEARCH_BIND_PASSWORD_VAL
+        echo
     else
         installLDAP=false
     fi
-fi
-
-if [[ ${installLDAP} = true ]]; then
-    read -s "Enter LDAP host IP or FQDN: " LDAP_URL_VAL
-    echo
-    read -s "Enter LDAP port: " LDAP_PORT_VAL
-    echo
-    read -s "Select LDAP encryption method ( none | ssl | starttls ): " LDAP_ENC_VAL
-    echo
-    read -s "Enter LDAP user base DN: " LDAP_USER_BASE_DN_VAL
-    echo
-    read -s "Enter LDAP search bind DN: " LDAP_SEARCH_BIND_DN_VAL
-    echo
-    read -s "Enter LDAP search bind password: " LDAP_SEARCH_BIND_PASSWORD_VAL
-    echo
 fi
 
 
