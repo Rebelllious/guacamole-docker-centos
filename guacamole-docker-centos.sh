@@ -83,7 +83,7 @@ fi
 
 if [[ -z "${installLDAP}" ]]; then
     # Prompt the user if they would like to configure LDAP authentication in addition to MySQL, default of no
-    echo -e -n "${CYAN}MFA: Would you like to configure LDAP authentication in addition to MySQL? (y/N): ${NC}"
+    echo -e -n "${CYAN}LDAP: Would you like to configure LDAP authentication in addition to MySQL? (y/N): ${NC}"
     read LDAP_PROMPT
     if [[ ${LDAP_PROMPT} =~ ^[Yy]$ ]]; then
         installLDAP=true
@@ -92,7 +92,7 @@ if [[ -z "${installLDAP}" ]]; then
     fi
 fi
 
-if [[ ${installLDAP} -eq true ]]; then
+if [[ ${installLDAP} = true ]]; then
     read -s "Enter LDAP host IP or FQDN: " LDAP_URL_VAL
     echo
     read -s "Enter LDAP port: " LDAP_PORT_VAL
