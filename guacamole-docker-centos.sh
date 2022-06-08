@@ -177,10 +177,10 @@ fi
 
 # Download and install LDAP
 if [ "${installLDAP}" = true ]; then
-    wget -q --show-progress -O guacamole-auth-ldap-${GUACVERSION}.tar.gz ${SERVER}/binary/guacamole-auth-ldap-${GUACVERSION}.tar.gz
+    wget -q --show-progress -O guacamole-auth-ldap-${GUACVERSION}.tar.gz https://dlcdn.apache.org/guacamole/${GUACVERSION}/binary/guacamole-auth-ldap-${GUACVERSION}.tar.gz
     if [ $? -ne 0 ]; then
         echo -e "${RED}Failed to download guacamole-auth-ldap-${GUACVERSION}.tar.gz" 1>&2
-        echo -e "${SERVER}/binary/guacamole-auth-ldap-${GUACVERSION}.tar.gz"
+        echo -e "https://dlcdn.apache.org/guacamole/${GUACVERSION}/binary/guacamole-auth-ldap-${GUACVERSION}.tar.gz"
         exit 1
     else
         echo -e "${GREEN}Downloaded guacamole-auth-ldap-${GUACVERSION}.tar.gz${NC}"
