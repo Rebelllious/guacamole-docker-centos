@@ -87,17 +87,17 @@ if [[ -z "${installLDAP}" ]]; then
     read LDAP_PROMPT
     if [[ ${LDAP_PROMPT} =~ ^[Yy]$ ]]; then
         installLDAP=true
-        read -s "Enter LDAP host IP or FQDN: " LDAP_URL_VAL
+        read -p "Enter LDAP host IP or FQDN: " LDAP_URL_VAL
         echo
-        read -s "Enter LDAP port: " LDAP_PORT_VAL
+        read -p "Enter LDAP port: " LDAP_PORT_VAL
         echo
-        read -s "Select LDAP encryption method ( none | ssl | starttls ): " LDAP_ENC_VAL
+        read -p "Select LDAP encryption method ( none | ssl | starttls ): " LDAP_ENC_VAL
         echo
-        read -s "Enter LDAP user base DN: " LDAP_USER_BASE_DN_VAL
+        read -p "Enter LDAP user base DN: " LDAP_USER_BASE_DN_VAL
         echo
-        read -s "Enter LDAP search bind DN: " LDAP_SEARCH_BIND_DN_VAL
+        read -p "Enter LDAP search bind DN: " LDAP_SEARCH_BIND_DN_VAL
         echo
-        read -s "Enter LDAP search bind password: " LDAP_SEARCH_BIND_PASSWORD_VAL
+        read -s -p "Enter LDAP search bind password: " LDAP_SEARCH_BIND_PASSWORD_VAL
         echo
     else
         installLDAP=false
