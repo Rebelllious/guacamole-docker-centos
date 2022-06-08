@@ -8,6 +8,7 @@ GUACVERSION="1.4.0"
 
 # Initialize variable values
 installTOTP=""
+configureLDAP=""
 
 # This is where we'll store persistent data for guacamole
 INSTALLFOLDER="/opt/guacamole"
@@ -80,6 +81,33 @@ if [[ -z "${installTOTP}" ]]; then
     fi
 fi
 
+if [[ -z "${installLDAP}" ]]; then
+    # Prompt the user if they would like to configure LDAP authentication in addition to MySQL, default of no
+    echo -e -n "${CYAN}MFA: Would you like to configure LDAP authentication in addition to MySQL? (y/N): ${NC}"
+    read LDAP_PROMPT
+    if [[ ${LDAP_PROMPT} =~ ^[Yy]$ ]]; then
+        installLDAP=true
+    else
+        installLDAP=false
+    fi
+fi
+
+if [[ ${installLDAP} -eq true ]]; then
+    read -s "Enter LDAP host IP or FQDN: " LDAP_URL_VAL
+    echo
+    read -s "Enter LDAP port: " LDAP_PORT_VAL
+    echo
+    read -s "Select LDAP encryption method ( none | ssl | starttls ): " LDAP_ENC_VAL
+    echo
+    read -s "Enter LDAP user base DN: " LDAP_USER_BASE_DN_VAL
+    echo
+    read -s "Enter LDAP search bind DN: " LDAP_SEARCH_BIND_DN_VAL
+    echo
+    read -s "Enter LDAP search bind password: " LDAP_SEARCH_BIND_PASSWORD_VAL
+    echo
+fi
+
+
 # Update and install wget if it's missing
 yum -y update
 yum -y install wget
@@ -150,6 +178,22 @@ if [ "${installTOTP}" = true ]; then
     fi
 fi
 
+# Download and install LDAP
+if [ "${installLDAP}" = true ]; then
+    wget -q --show-progress -O guacamole-auth-ldap-${GUACVERSION}.tar.gz ${SERVER}/binary/guacamole-auth-ldap-${GUACVERSION}.tar.gz
+    if [ $? -ne 0 ]; then
+        echo -e "${RED}Failed to download guacamole-auth-ldap-${GUACVERSION}.tar.gz" 1>&2
+        echo -e "${SERVER}/binary/guacamole-auth-ldap-${GUACVERSION}.tar.gz"
+        exit 1
+    else
+        echo -e "${GREEN}Downloaded guacamole-auth-ldap-${GUACVERSION}.tar.gz${NC}"
+        tar -xzf guacamole-auth-ldap-${GUACVERSION}.tar.gz
+        echo -e "${BLUE}Moving guacamole-auth-ldap-${GUACVERSION}.jar (${INSTALLFOLDER}/extensions/)...${NC}"
+        cp -f guacamole-auth-ldap-${GUACVERSION}/guacamole-auth-ldap-${GUACVERSION}.jar ${INSTALLFOLDER}/extensions/
+        echo
+    fi
+fi
+
 # Start MySQL
 docker run --restart=always --detach --name=mysql -v ${MYSQLDATAFOLDER}:/var/lib/mysql --env="MYSQL_ROOT_PASSWORD=$mysqlrootpassword" --publish 3306:3306 healthcheck/mysql --default-authentication-plugin=mysql_native_password
 
@@ -173,7 +217,11 @@ echo $SQLCODE | mysql -h 127.0.0.1 -P 3306 -u root -p$mysqlrootpassword
 cat guacamole-auth-jdbc-${GUACVERSION}/mysql/schema/*.sql | mysql -u root -p$mysqlrootpassword -h 127.0.0.1 -P 3306 guacamole_db
 
 docker run --restart=always --name guacd --detach guacamole/guacd:${GUACVERSION}
-docker run --restart=always --name guacamole --detach --link mysql:mysql --link guacd:guacd -v ${INSTALLFOLDER}:/etc/guacamole -e MYSQL_HOSTNAME=127.0.0.1 -e MYSQL_DATABASE=guacamole_db -e MYSQL_USER=guacamole_user -e MYSQL_PASSWORD=$guacdbuserpassword -e GUACAMOLE_HOME=/etc/guacamole -p 8080:8080 guacamole/guacamole:${GUACVERSION}
+
+if [[ ${installLDAP} = false ]]; then
+    docker run --restart=always --name guacamole --detach --link mysql:mysql --link guacd:guacd -v ${INSTALLFOLDER}:/etc/guacamole -e MYSQL_HOSTNAME=127.0.0.1 -e MYSQL_DATABASE=guacamole_db -e MYSQL_USER=guacamole_user -e MYSQL_PASSWORD=$guacdbuserpassword -e GUACAMOLE_HOME=/etc/guacamole -p 8080:8080 guacamole/guacamole:${GUACVERSION}
+else
+    docker run --restart=always --name guacamole --detach --link mysql:mysql --link guacd:guacd -v ${INSTALLFOLDER}:/etc/guacamole -e MYSQL_HOSTNAME=127.0.0.1 -e MYSQL_DATABASE=guacamole_db -e MYSQL_USER=guacamole_user -e MYSQL_PASSWORD=$guacdbuserpassword -e GUACAMOLE_HOME=/etc/guacamole -e LDAP_URL=${LDAP_URL_VAL} -e LDAP_PORT=${LDAP_PORT_VAL} -e LDAP_ENCRYPTION_METHOD=${LDAP_ENC_VAL} -e LDAP_USER_BASE_DN=${LDAP_USER_BASE_DN_VAL} -e LDAP_SEARCH_BIND_DN=${LDAP_SEARCH_BIND_DN_VAL} -e LDAP_SEARCH_BIND_PASSWORD=${LDAP_SEARCH_BIND_PASSWORD_VAL} -p 8080:8080 guacamole/guacamole:${GUACVERSION}
 
 # Done
 echo
