@@ -8,7 +8,7 @@ GUACVERSION="1.4.0"
 
 # Initialize variable values
 installTOTP=""
-configureLDAP=""
+installLDAP=""
 
 # This is where we'll store persistent data for guacamole
 INSTALLFOLDER="/opt/guacamole"
