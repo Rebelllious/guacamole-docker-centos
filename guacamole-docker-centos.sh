@@ -161,7 +161,7 @@ tar -xzf guacamole-auth-jdbc-${GUACVERSION}.tar.gz
 
 # Download and install TOTP
 if [ "${installTOTP}" = true ]; then
-    wget -q --show-progress -O guacamole-auth-totp-${GUACVERSION}.tar.gz ${SERVER}/binary/guacamole-auth-totp-${GUACVERSION}.tar.gz
+    wget -q -O guacamole-auth-totp-${GUACVERSION}.tar.gz ${SERVER}/binary/guacamole-auth-totp-${GUACVERSION}.tar.gz | grep "%"
     if [ $? -ne 0 ]; then
         echo -e "${RED}Failed to download guacamole-auth-totp-${GUACVERSION}.tar.gz" 1>&2
         echo -e "${SERVER}/binary/guacamole-auth-totp-${GUACVERSION}.tar.gz"
@@ -177,7 +177,7 @@ fi
 
 # Download and install LDAP
 if [ "${installLDAP}" = true ]; then
-    wget -q --show-progress -O guacamole-auth-ldap-${GUACVERSION}.tar.gz https://dlcdn.apache.org/guacamole/${GUACVERSION}/binary/guacamole-auth-ldap-${GUACVERSION}.tar.gz
+    wget -q -O guacamole-auth-ldap-${GUACVERSION}.tar.gz https://dlcdn.apache.org/guacamole/${GUACVERSION}/binary/guacamole-auth-ldap-${GUACVERSION}.tar.gz | grep "%"
     if [ $? -ne 0 ]; then
         echo -e "${RED}Failed to download guacamole-auth-ldap-${GUACVERSION}.tar.gz" 1>&2
         echo -e "https://dlcdn.apache.org/guacamole/${GUACVERSION}/binary/guacamole-auth-ldap-${GUACVERSION}.tar.gz"
