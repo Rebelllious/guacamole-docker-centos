@@ -147,7 +147,7 @@ else
 fi
 
 # Set SERVER to be the preferred download server from the Apache CDN
-SERVER="http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUACVERSION}"
+SERVER="https://dlcdn.apache.org/guacamole/${GUACVERSION}"
 
 # Download Guacamole authentication extensions
 wget -O guacamole-auth-jdbc-${GUACVERSION}.tar.gz ${SERVER}/binary/guacamole-auth-jdbc-${GUACVERSION}.tar.gz
