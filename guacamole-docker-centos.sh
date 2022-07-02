@@ -215,7 +215,7 @@ cat guacamole-auth-jdbc-${GUACVERSION}/mysql/schema/*.sql | mysql -u root -p$mys
 
 docker run --restart=always --name guacd --detach guacamole/guacd:${GUACVERSION}
 
-if [[ "${installLDAP}" = false ]]; then
+if [ "${installLDAP}" = false ]; then
     docker run --restart=always --name guacamole --detach --link mysql:mysql --link guacd:guacd -v ${INSTALLFOLDER}:/etc/guacamole -e MYSQL_HOSTNAME=127.0.0.1 -e MYSQL_DATABASE=guacamole_db -e MYSQL_USER=guacamole_user -e MYSQL_PASSWORD=$guacdbuserpassword -e GUACAMOLE_HOME=/etc/guacamole -p 8080:8080 guacamole/guacamole:${GUACVERSION}
 else
     docker run --restart=always --name guacamole --detach --link mysql:mysql --link guacd:guacd -v ${INSTALLFOLDER}:/etc/guacamole -e MYSQL_HOSTNAME=127.0.0.1 -e MYSQL_DATABASE=guacamole_db -e MYSQL_USER=guacamole_user -e MYSQL_PASSWORD=$guacdbuserpassword -e GUACAMOLE_HOME=/etc/guacamole -e LDAP_URL=${LDAP_URL_VAL} -e LDAP_PORT=${LDAP_PORT_VAL} -e LDAP_ENCRYPTION_METHOD=${LDAP_ENC_VAL} -e LDAP_USER_BASE_DN=${LDAP_USER_BASE_DN_VAL} -e LDAP_SEARCH_BIND_DN=${LDAP_SEARCH_BIND_DN_VAL} -e LDAP_SEARCH_BIND_PASSWORD=${LDAP_SEARCH_BIND_PASSWORD_VAL} -p 8080:8080 guacamole/guacamole:${GUACVERSION}
